@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Laris Manis</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#1f1b39">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Laris Manis">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: phone app — one column of screens, fixed tab bar at the bottom (Sell · Menu · Sessions · Insights · Plan) */
+:root{
+  --bg:#f6f3fb; --panel:#ffffff; --line:#ddd6ea; --fg:#1d1830; --muted:#6a6380;
+  --gold:#b87a00; --gold-soft:#fff1cc; --good:#1f7a4d; --good-soft:#dff3e8; --bad:#b3261e; --bad-soft:#fbe3e1;
+  --chip:#ede8f6; --grid:#e7e1f1; --bar:#d99a12;
+  --h0b:#ffe6cc; --h0f:#9a4a00; --h1b:#d9f2e4; --h1f:#17683f; --h2b:#dce9ff; --h2f:#1f4fa3; --h3b:#fbe0ec; --h3f:#a0255c; --h4b:#ece1ff; --h4f:#5b33a8; --h5b:#d6f1f3; --h5f:#0f6670;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15122a; --panel:#1f1b39; --line:#332d55; --fg:#f2eefc; --muted:#a59fc0;
+  --gold:#ffc23d; --gold-soft:#3a2f12; --good:#5fd39a; --good-soft:#173527; --bad:#ff8a80; --bad-soft:#3d1b1d;
+  --chip:#2a2548; --grid:#2c2750; --bar:#f2b42c;
+  --h0b:#4a2e12; --h0f:#ffbf80; --h1b:#173a28; --h1f:#7fe0a9; --h2b:#1d2d52; --h2f:#9dbcff; --h3b:#47182f; --h3f:#ff9cc6; --h4b:#33245a; --h4f:#c9b0ff; --h5b:#123a3e; --h5f:#80dbe3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15122a; --panel:#1f1b39; --line:#332d55; --fg:#f2eefc; --muted:#a59fc0;
+  --gold:#ffc23d; --gold-soft:#3a2f12; --good:#5fd39a; --good-soft:#173527; --bad:#ff8a80; --bad-soft:#3d1b1d;
+  --chip:#2a2548; --grid:#2c2750; --bar:#f2b42c;
+  --h0b:#4a2e12; --h0f:#ffbf80; --h1b:#173a28; --h1f:#7fe0a9; --h2b:#1d2d52; --h2f:#9dbcff; --h3b:#47182f; --h3f:#ff9cc6; --h4b:#33245a; --h4f:#c9b0ff; --h5b:#123a3e; --h5f:#80dbe3; color-scheme:dark}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:18px calc(96px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:1.6rem;font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.15rem;font-weight:600}
+h3{font-size:1rem;font-weight:600}
+p{margin:0}
+.muted{color:var(--muted)}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+input,select,button{font:inherit;color:inherit}
+input,select{background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.btn{border:0;border-radius:10px;padding:11px 16px;background:var(--gold);color:#1d1830;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--fg)}
+.btn.danger{background:var(--bad);color:#fff}
+.btn.small{padding:7px 12px;font-size:.9rem}
+.link{background:none;border:0;color:var(--gold);font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.row > label{display:flex;flex-direction:column;gap:4px;flex:1 1 110px;min-width:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:.75rem;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--chip);color:var(--muted)}
+.chip.holiday{background:var(--gold-soft);color:var(--gold)}
+.chip.long{background:var(--gold-soft);color:var(--gold)}
+.chip.school{background:var(--good-soft);color:var(--good)}
+.chip.payday{background:var(--good-soft);color:var(--good)}
+.chip.ramadan{background:var(--bad-soft);color:var(--bad)}
+.tally{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tally div{background:var(--chip);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tally b{font-family:var(--display);font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tally .cash{background:var(--gold-soft)} .tally .cash b{color:var(--gold)}
+@media (max-width:420px){.tally{grid-template-columns:1fr 1fr}}
+.item{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ihead{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ihead b{font-family:var(--display);font-size:1.1rem}
+.istat{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;font-size:.9rem;color:var(--muted)}
+.istat b{color:var(--fg);font-variant-numeric:tabular-nums}
+.istat input{width:64px;padding:6px 8px}
+.istat .low b{color:var(--bad)}
+.iact{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.stepper button{width:40px;height:48px;border:0;background:var(--chip);font-size:1.3rem;font-weight:700;cursor:pointer}
+.stepper span{min-width:34px;text-align:center;font-family:var(--display);font-weight:800;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.act{border:0;border-radius:12px;padding:8px 14px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;flex:1 1 90px;min-height:48px}
+.act small{font-weight:400;font-size:.8rem;opacity:.85}
+.act.sell{background:var(--gold);color:#1d1830;flex:2 1 120px;font-size:1.05rem}
+.act.deal{background:var(--good-soft);color:var(--good);border:1.5px solid var(--good)}
+.act.free{background:var(--chip);border:1.5px solid var(--line)}
+.toast{font-size:.9rem;font-weight:700;color:var(--good);min-height:1.3em}
+ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.e{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding-block:9px;border-bottom:1px solid var(--line)}
+.e:last-child{border-bottom:0}
+.e .tm{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums;background:none;border:0;padding:2px;cursor:pointer;text-decoration:underline dotted}
+.e input[type=time]{width:96px;padding:4px 6px;font-size:.85rem}
+.e .what{min-width:0;overflow-wrap:anywhere}
+.e .amt{font-variant-numeric:tabular-nums;font-weight:700}
+.e.sale .amt,.e.deal .amt{color:var(--good)} .e.spend .amt{color:var(--bad)} .e.free .amt{color:var(--muted)}
+.pill{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:99px;margin-right:6px;vertical-align:1px;background:var(--chip);color:var(--muted)}
+.e.sale .pill{background:var(--good-soft);color:var(--good)}
+.e.deal .pill{background:var(--gold-soft);color:var(--gold)}
+.e.spend .pill{background:var(--bad-soft);color:var(--bad)}
+.x{background:none;border:0;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:4px 8px;border-radius:8px}
+.empty{color:var(--muted);font-size:.95rem}
+.verdict{font-weight:700;padding:10px 12px;border-radius:10px;background:var(--chip)}
+.verdict.good{color:var(--good)} .verdict.bad{color:var(--bad)}
+.sum{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:.95rem}
+.sum span:nth-child(even){font-variant-numeric:tabular-nums;font-weight:700;text-align:right}
+.sum .tot{border-top:1px solid var(--line);padding-top:6px;font-weight:700}
+.list-btn{display:grid;grid-template-columns:1fr auto;gap:3px 12px;padding:12px 10px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;cursor:pointer;border-radius:10px}
+.list-btn:last-child{border-bottom:0}
+.list-btn.on{background:var(--chip)}
+.list-btn .d{font-weight:700}
+.list-btn .k{font-variant-numeric:tabular-nums;font-weight:700;color:var(--gold)}
+.list-btn .s{font-size:.85rem;color:var(--muted);grid-column:1/-1}
+.list-btn .chips{grid-column:1/-1}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tiles div{background:var(--chip);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tiles b{font-family:var(--display);font-size:1.25rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tiles .hero{grid-column:span 2;background:var(--gold-soft)} .tiles .hero b{color:var(--gold);font-size:1.7rem}
+@media (max-width:420px){.tiles{grid-template-columns:1fr 1fr}}
+.chart{overflow-x:auto;margin-inline:-4px}
+.chart svg{display:block;width:100%;height:auto}
+.chart text{fill:var(--muted);font-family:var(--body);font-size:11px}
+.chart .val{fill:var(--fg);font-weight:700}
+.chart .bar{fill:var(--bar)}
+.chart .bar.dim{fill:var(--line)}
+.chart .gl{stroke:var(--grid);stroke-width:1}
+.chart .hit{fill:transparent;cursor:pointer}
+.chart .hit:hover + .bar,.chart .hit:focus + .bar{opacity:.8}
+.mk{fill:var(--gold)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+.tbl{overflow-x:auto}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.note{font-size:.88rem;color:var(--muted)}
+.callout{background:var(--gold-soft);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.plan{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;padding-block:12px;border-bottom:1px solid var(--line);align-items:start}
+.plan:last-child{border-bottom:0}
+.plan .day{font-family:var(--display);font-weight:800;font-size:1.3rem;line-height:1;text-align:center;min-width:48px}
+.plan .day small{display:block;font-family:var(--body);font-weight:700;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.plan .sug{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.plan .sug{display:flex;flex-direction:column;gap:6px;max-width:16em}
+.plan .sug small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.plan .sug small.basis{font-style:italic}
+@media (max-width:460px){.plan{grid-template-columns:auto 1fr}.plan .sug{grid-column:2;text-align:left;max-width:none}}
+.plan .body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.plan.busy .day{color:var(--gold)}
+.mtools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mtools input{flex:1 1 200px}
+.badge{flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:.95rem;letter-spacing:.02em}
+.h0{background:var(--h0b);color:var(--h0f)} .h1{background:var(--h1b);color:var(--h1f)} .h2{background:var(--h2b);color:var(--h2f)}
+.h3{background:var(--h3b);color:var(--h3f)} .h4{background:var(--h4b);color:var(--h4f)} .h5{background:var(--h5b);color:var(--h5f)}
+.mlist{display:flex;flex-direction:column;gap:8px}
+.mi{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.mi.open{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.mi.off .badge{filter:grayscale(1);opacity:.6}
+.mi-head{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:0;background:none;text-align:left;cursor:pointer}
+.mi-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px}
+.mi-main b{font-family:var(--display);font-size:1.02rem;overflow-wrap:anywhere}
+.mi-sub{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.85rem;color:var(--muted)}
+.dchip{font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--good-soft);color:var(--good)}
+.mi-head .chev{flex:0 0 auto;width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;transition:transform .15s}
+.mi.open .chev{transform:rotate(180deg)}
+.mi-edit{border-top:1px solid var(--line);padding:12px;background:var(--bg)}
+.mi-edit .mrow{border-bottom:0;padding-block:0}
+.hidden-pill{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--chip);color:var(--muted)}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-bottom:1px solid var(--line);padding-block:12px}
+.mrow:last-child{border-bottom:0}
+.mrow label{display:flex;flex-direction:column;gap:4px;min-width:0}
+.mrow .full{grid-column:1/-1}
+.mrow .ctl{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.mrow.off{opacity:.6}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+details summary{cursor:pointer;font-weight:700;list-style:none;color:var(--gold)}
+details summary::-webkit-details-marker{display:none}
+.mnav{display:flex;align-items:center;gap:8px}
+.mnav button{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);cursor:pointer;font-size:1.1rem}
+.mnav b{font-family:var(--display);min-width:9em;text-align:center}
+.gear{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);display:grid;place-items:center;cursor:pointer}
+.gear svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.8}
+.status{font-size:.8rem;color:var(--muted);text-align:center}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--panel);border-top:1px solid var(--line);
+  padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{background:none;border:0;padding:10px 2px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer}
+nav.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-current="page"]{color:var(--gold)}
+#tip{position:fixed;z-index:30;pointer-events:none;background:var(--fg);color:var(--bg);font-size:.82rem;padding:6px 9px;border-radius:8px;max-width:220px}
+@media (prefers-reduced-motion:no-preference){.act:active,.stepper button:active{transform:scale(.96)} .e.new{animation:pop .6s ease}}
+@keyframes pop{from{background:var(--gold-soft)}to{background:transparent}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Laris Manis</h1>
+    <span class="inline" style="display:flex;gap:10px;align-items:center"><span class="label" id="todayLabel"></span>
+    <button type="button" class="gear" data-tab="settings" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></span>
+  </header>
+  <div id="connectBanner" class="callout" hidden><b>Connect your Google Sheet</b><span>Your sales are saved on this phone only until you connect. <button class="link" data-tab="settings">Open settings</button></span></div>
+  <main id="screen" aria-live="polite"></main>
+  <p class="status" id="status">Loading…</p>
+</div>
+
+<nav class="tabs" aria-label="Screens"><div class="in">
+  <button type="button" data-tab="sell"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1.5 11a2 2 0 0 1-2 1.7H7.5a2 2 0 0 1-2-1.7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>Sell</button>
+  <button type="button" data-tab="menu"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>Menu</button>
+  <button type="button" data-tab="sessions"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Sessions</button>
+  <button type="button" data-tab="insights"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>Insights</button>
+  <button type="button" data-tab="plan"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg>Plan</button>
+</div></nav>
+<div id="tip" hidden></div>
+
+<script>
+/* ---------- Calendar data for Pahang (public holidays; school holidays Kumpulan B; Ramadan approx.) ---------- */
+const PH = {
+  '2026-01-01':'New Year','2026-02-17':'Chinese New Year','2026-02-18':'Chinese New Year','2026-03-21':'Hari Raya Aidilfitri',
+  '2026-03-22':'Hari Raya Aidilfitri','2026-03-23':'Hari Raya Aidilfitri','2026-05-01':'Labour Day','2026-05-22':'Hari Hol Pahang',
+  '2026-05-27':'Hari Raya Haji','2026-05-31':'Wesak Day','2026-06-01':'Agong\'s Birthday / Wesak','2026-06-17':'Awal Muharram',
+  '2026-07-31':'Sultan of Pahang\'s Birthday','2026-08-25':'Maulidur Rasul','2026-08-31':'Merdeka Day','2026-09-16':'Malaysia Day',
+  '2026-11-08':'Deepavali','2026-11-09':'Deepavali holiday','2026-12-25':'Christmas',
+  '2027-01-01':'New Year','2027-02-06':'Chinese New Year','2027-02-07':'Chinese New Year','2027-02-24':'Nuzul Al-Quran',
+  '2027-03-10':'Hari Raya Aidilfitri','2027-03-11':'Hari Raya Aidilfitri','2027-05-01':'Labour Day','2027-05-17':'Hari Raya Haji',
+  '2027-05-20':'Wesak Day','2027-05-22':'Hari Hol Pahang','2027-06-06':'Awal Muharram','2027-06-07':'Agong\'s Birthday',
+  '2027-07-30':'Sultan of Pahang\'s Birthday','2027-08-15':'Maulidur Rasul','2027-08-31':'Merdeka Day','2027-09-16':'Malaysia Day',
+  '2027-10-28':'Deepavali','2027-12-25':'Christmas'
+};
+const SCHOOL = [['2026-02-16','2026-02-20'],['2026-03-19','2026-03-29'],['2026-05-23','2026-06-07'],['2026-08-29','2026-09-06'],
+  ['2026-11-10','2026-11-10'],['2026-12-05','2027-01-03'],['2027-03-06','2027-03-14'],['2027-05-22','2027-06-06'],
+  ['2027-08-28','2027-09-05'],['2027-12-04','2027-12-31']];
+const RAMADAN = [['2026-02-19','2026-03-20'],['2027-02-08','2027-03-09']];
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rm = n => 'RM' + (Math.round((+n||0)*100)/100).toFixed(2);
+const rm0 = n => 'RM' + (Math.round(+n||0)).toLocaleString('en-MY');
+const pad = n => String(n).padStart(2,'0');
+const today = () => { const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); };
+const nowHM = () => { const d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); };
+const U = s => new Date(s+'T00:00:00Z');
+const addDays = (s,n) => { const d=U(s); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+const dow = s => U(s).getUTCDay();
+const nice = s => U(s).toLocaleDateString('en-MY',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'});
+const niceLong = s => U(s).toLocaleDateString('en-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+const monthName = ym => U(ym+'-01').toLocaleDateString('en-MY',{month:'long',year:'numeric',timeZone:'UTC'});
+const inRange = (d,rs) => rs.some(([a,b])=>d>=a&&d<=b);
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const plural = (n,w) => n+' '+w+(n===1?'':'s');
+
+function tags(d){
+  const t=[];
+  if (PH[d]) t.push({k:'holiday',label:PH[d]});
+  else {
+    const near=[-1,1,...(dow(d)===0?[-2]:[])].map(o=>PH[addDays(d,o)]).find(Boolean);
+    if (near) t.push({k:'long',label:'Long weekend · '+near});
+  }
+  if (inRange(d,SCHOOL)) t.push({k:'school',label:'School holiday'});
+  const dm=+d.slice(8,10); if (dm>=25||dm<=2) t.push({k:'payday',label:'Payday week'});
+  if (inRange(d,RAMADAN)) t.push({k:'ramadan',label:'Ramadan'});
+  return t;
+}
+const isBusy = d => tags(d).some(t=>['holiday','long','school','payday'].includes(t.k));
+const isRamadan = d => inRange(d,RAMADAN);
+const chips = d => { const t=tags(d); return t.length?'<div class="chips">'+t.map(x=>`<span class="chip ${x.k}">${esc(x.label)}</span>`).join('')+'</div>':''; };
+
+/* ---------- state ---------- */
+let menu = [];            // [{id,name,price,deals:[{qty,price}],active}]
+const normItem = m => ({...m, deals: Array.isArray(m.deals) ? m.deals.map(d=>({qty:+d.qty||0, price:+d.price||0})) : (m.dealQty ? [{qty:m.dealQty, price:m.dealPrice}] : [])});
+const hue = id => { let h=0; for (const c of String(id)) h=(h*31+c.charCodeAt(0))>>>0; return h%6; };
+const initials = n => (String(n).trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('')||'?').toUpperCase();
+const badge = m => `<span class="badge h${hue(m.id)}" aria-hidden="true">${esc(initials(m.name))}</span>`;
+const dealText = d => `${d.qty} for ${rm(d.price)}`;
+let sessions = {};        // id -> session
+let curId = null, tab = 'sell', insMonth = today().slice(0,7);
+const qty = {};           // itemId -> chosen quantity
+let openItem = null, addOpen = false, menuQuery = '';
+let lastAdded = null, toastMsg = '', toastUndo = null, toastTimer = null, editTime = null, confirmDel = null;
+let mode = 'local';
+const dirty = new Set(); let flushTimer = null, flushing = false;
+
+function itemById(id){ return menu.find(m=>m.id===id); }
+function cur(){ return curId && sessions[curId]; }
+function sessionStats(s){
+  const items = {}; let sales=0, me=0, other=0, sold=0, free=0, deals=0, discount=0;
+  const it = id => items[id] || (items[id]={sold:0,free:0,sales:0,deals:0,brought:+(s.brought?.[id])||0});
+  for (const id in (s.brought||{})) it(id);
+  for (const e of s.entries){
+    if (e.type==='sale'||e.type==='deal'){ const x=it(e.itemId); x.sold+=e.qty; x.sales+=e.amount; sold+=e.qty; sales+=e.amount;
+      if (e.type==='deal'){ x.deals++; deals++; const m=itemById(e.itemId); if(m) discount += Math.max(0,e.qty*m.price-e.amount); } }
+    else if (e.type==='free'){ const x=it(e.itemId); x.free+=e.qty; free+=e.qty; }
+    else if (e.type==='spend'){ if (e.cat==='me') me+=e.amount; else other+=e.amount; }
+  }
+  let brought=0, left=0; for (const id in items){ brought+=items[id].brought; items[id].left=items[id].brought-items[id].sold-items[id].free; }
+  left = brought - sold - free;
+  return {items, sales, me, other, spent:me+other, should:sales-me-other, sold, free, deals, discount, brought, left};
+}
+const sortedSessions = () => Object.values(sessions).sort((a,b)=>(b.date+b.start).localeCompare(a.date+a.start));
+
+/* ---------- saving ---------- */
+function setStatus(t){ $('status').textContent=t; }
+function markDirty(key){ dirty.add(key); setStatus('Saving…'); clearTimeout(flushTimer); flushTimer=setTimeout(flush,400); }
+function saveLocal(){ try{ localStorage.setItem('stall-v3', JSON.stringify({menu,sessions})); localStorage.setItem('stall-v3-pending', JSON.stringify([...pending])); }catch(e){} }
+let pending = new Set(); try{ pending = new Set(JSON.parse(localStorage.getItem('stall-v3-pending')||'[]')); }catch(e){}
+async function flush(){
+  if (flushing){ flushTimer=setTimeout(flush,300); return; }
+  flushing=true; const keys=[...dirty]; dirty.clear();
+  keys.forEach(k=>pending.add(k)); saveLocal();
+  try{
+    if (mode==='sheet'){
+      for (const k of keys){
+        if (k==='menu') await api('saveMenu',{items:menu});
+        else if (sessions[k]) await api('saveSession',{session:sessions[k]});
+        else await api('deleteSession',{id:k});
+        if (!dirty.has(k)) pending.delete(k);
+      }
+    }
+    saveLocal();
+    setStatus(mode==='sheet'?'Saved to your Google Sheet':'Saved on this phone');
+  }catch(e){
+    keys.forEach(k=>dirty.add(k)); setStatus('No internet. Saved on this phone, will upload to your sheet soon.');
+    flushTimer=setTimeout(flush,5000);
+  }finally{ flushing=false; }
+}
+
+/* ---------- actions ---------- */
+function newSession({date,start,end,place}){
+  const id = date+'-'+Math.random().toString(36).slice(2,6);
+  const brought={}; menu.filter(m=>m.active).forEach(m=>brought[m.id]=0);
+  sessions[id]={id,date,start,end,place:place||'',brought,counted:null,entries:[]};
+  curId=id; markDirty(id);
+}
+function entryTime(s){ return s.date + 'T' + (s.date===today() ? nowHM() : (s.start||'09:00')); }
+function addEntry(e){
+  const s=cur(); if(!s) return;
+  e.id=uid(); e.t=entryTime(s); s.entries.push(e); lastAdded=e.id; markDirty(s.id); return e.id;
+}
+function showToast(msg, undoId){
+  toastMsg=msg; toastUndo=undoId; clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ toastMsg=''; toastUndo=null; const t=$('toast'); if(t) t.innerHTML=''; },6000);
+}
+
+/* ---------- screens ---------- */
+function render(){
+  $('todayLabel').textContent = nice(today());
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current', b.dataset.tab===tab?'page':'false'));
+  const S = {sell:renderSell, menu:renderMenu, sessions:renderSessions, insights:renderInsights, plan:renderPlan, settings:renderSettings}[tab];
+  $('connectBanner').hidden = mode==='sheet' || tab==='settings';
+  $('screen').innerHTML = '<div class="wrap" style="max-width:none">'+S()+'</div>';
+  if (editTime){ const i=document.querySelector('[data-timeinput]'); if(i) i.focus(); }
+}
+
+function sessionForm(prefix, def){
+  return `<div class="row">
+    <label><span class="label">Date</span><input type="date" id="${prefix}Date" value="${def.date}"></label>
+    <label><span class="label">Start</span><input type="time" id="${prefix}Start" value="${def.start}"></label>
+    <label><span class="label">End</span><input type="time" id="${prefix}End" value="${def.end}"></label>
+    <label style="flex-basis:100%"><span class="label">Place (optional)</span><input id="${prefix}Place" placeholder="e.g. Pasar Minggu" value="${esc(def.place||'')}"></label>
+  </div>`;
+}
+function defaultSessionValues(){
+  const last = sortedSessions()[0];
+  return {date:today(), start:last?.start||'09:00', end:last?.end||'12:00', place:last?.place||''};
+}
+
+function renderSell(){
+  const s = cur();
+  if (!s){
+    const d=defaultSessionValues();
+    return `<section class="panel"><h2>Start a session</h2>
+      <p class="muted">A session is one time you sell. Set the date and hours, then tap Start.</p>
+      ${chips(d.date)}
+      ${sessionForm('ns',d)}
+      <button class="btn" data-act="startSession">Start session</button>
+      ${menu.filter(m=>m.active).length?'':'<p class="note">Your menu is empty. Add your foods in the Menu tab first.</p>'}
+    </section>`;
+  }
+  const st = sessionStats(s);
+  const items = menu.filter(m=>m.active || st.items[m.id]);
+  const itemCards = items.length ? items.map(m=>{
+    const x = st.items[m.id] || {sold:0,free:0,brought:+(s.brought?.[m.id])||0,left:0};
+    const left = x.brought - x.sold - x.free;
+    const q = qty[m.id]||1;
+    return `<div class="item">
+      <div class="ihead"><span style="display:flex;gap:10px;align-items:center;min-width:0">${badge(m)}<b>${esc(m.name)}</b></span><span class="muted">${rm(m.price)} each</span></div>
+      <div class="istat">
+        <label>Brought <input type="number" min="0" inputmode="numeric" data-brought="${m.id}" value="${x.brought||''}" aria-label="${esc(m.name)} brought"></label>
+        <span>Sold <b>${x.sold}</b></span><span>Free <b>${x.free}</b></span>
+        <span class="${x.brought&&left<=3?'low':''}">Left <b>${x.brought?left:'–'}</b></span>
+      </div>
+      <div class="iact">
+        <div class="stepper"><button type="button" data-act="q-" data-id="${m.id}" aria-label="Fewer">−</button><span>${q}</span><button type="button" data-act="q+" data-id="${m.id}" aria-label="More">+</button></div>
+        <button type="button" class="act sell" data-act="sell" data-id="${m.id}">Sold ${q}<small>${rm(q*m.price)}</small></button>
+        ${m.deals.map((d,i)=>`<button type="button" class="act deal" data-act="deal" data-id="${m.id}" data-deal="${i}">${d.qty} for<small>${rm(d.price)}</small></button>`).join('')}
+        <button type="button" class="act free" data-act="free" data-id="${m.id}">Free ${q}<small>no money</small></button>
+      </div>
+    </div>`;
+  }).join('') : '<p class="empty">No foods on your menu yet. Open the Menu tab to add them.</p>';
+
+  const log = s.entries.length ? [...s.entries].reverse().map(e=>{
+    const time = e.t.slice(11,16);
+    const tcell = editTime===e.id ? `<input type="time" value="${time}" data-timeinput="${e.id}" aria-label="Change time">`
+      : `<button type="button" class="tm" data-act="editTime" data-id="${e.id}" aria-label="Change time ${time}">${time}</button>`;
+    let what, amt;
+    if (e.type==='sale'){ what=`<span class="pill">Sold</span>${e.qty} × ${esc(e.name)}`; amt='+'+rm(e.amount); }
+    else if (e.type==='deal'){ what=`<span class="pill">Deal</span>${e.qty} × ${esc(e.name)}`; amt='+'+rm(e.amount); }
+    else if (e.type==='free'){ what=`<span class="pill">Free</span>${e.qty} × ${esc(e.name)}`; amt='RM0.00'; }
+    else { what=`<span class="pill">${e.cat==='me'?'Food for me':e.cat==='stall'?'Stall':'Other'}</span>${esc(e.what)}`; amt='−'+rm(e.amount); }
+    return `<li class="e ${e.type}${e.id===lastAdded?' new':''}">${tcell}<div class="what">${what}</div><span class="amt">${amt}</span><button type="button" class="x" data-act="rmEntry" data-id="${e.id}" aria-label="Remove this entry">×</button></li>`;
+  }).join('') : '<li class="empty">Every sale, deal, free bowl and spend shows up here with its time.</li>';
+  lastAdded=null;
+
+  let verdict='';
+  if (s.counted!==null && s.counted!==undefined){
+    const diff=Math.round((s.counted-st.should)*100)/100;
+    verdict = `<div class="verdict ${diff>=0?'good':'bad'}">${diff===0?'Cash matches your list.':diff>0?rm(diff)+' more than your list. Maybe a sale you didn\'t tap, or a tip.':rm(-diff)+' short. Maybe a spend you didn\'t add, or a free bowl tapped as sold.'}</div>`;
+  }
+  return `
+  <section class="panel">
+    <div class="top"><div><h2>${niceLong(s.date)}</h2><p class="muted">${esc(s.start)}–${esc(s.end)}${s.place?' · '+esc(s.place):''}</p></div>
+      <button class="link" data-tab="sessions">Change session</button></div>
+    ${chips(s.date)}
+  </section>
+  <div class="tally">
+    <div><span class="label">Sold</span><b>${st.sold}</b></div>
+    <div><span class="label">Free</span><b>${st.free}</b></div>
+    <div><span class="label">Left</span><b>${st.brought?st.left:'–'}</b></div>
+    <div class="cash"><span class="label">Cash now</span><b>${rm(st.should)}</b></div>
+  </div>
+  <section class="panel"><h2>Customer came</h2>${itemCards}
+    <div class="toast" id="toast" role="status">${toastMsg?esc(toastMsg)+(toastUndo?` <button class="link" data-act="undo" data-id="${toastUndo}">Undo</button>`:''):''}</div>
+    <details id="spendBox"><summary>+ I spent sales money</summary>
+      <div class="row" style="margin-top:12px">
+        <label style="flex:2 1 160px"><span class="label">What</span><input id="sWhat" placeholder="e.g. satay, ice"></label>
+        <label style="flex:1 1 80px"><span class="label">RM</span><input id="sAmt" type="number" min="0" step="0.1" inputmode="decimal"></label>
+        <label style="flex:1 1 140px"><span class="label">Kind</span><select id="sType"><option value="me">Food for me</option><option value="stall">Stall supplies</option><option value="other">Other</option></select></label>
+        <button class="btn" data-act="addSpend">Add</button>
+      </div>
+    </details>
+  </section>
+  <section class="panel"><div class="top"><h2>Session list</h2><span class="label">${plural(s.entries.length,'entry').replace('entrys','entries')}</span></div>
+    <p class="note">Tap a time to change it.</p><ul>${log}</ul></section>
+  <section class="panel"><h2>End of session</h2>
+    <div class="sum">
+      <span>Sales (${st.sold} sold${st.deals?`, ${plural(st.deals,'deal')}`:''})</span><span>${rm(st.sales)}</span>
+      <span>Food for me</span><span>−${rm(st.me)}</span>
+      <span>Stall supplies &amp; other</span><span>−${rm(st.other)}</span>
+      <span class="tot">Cash you should have</span><span class="tot">${rm(st.should)}</span>
+    </div>
+    <label class="label" for="counted">Cash you counted</label>
+    <input type="number" id="counted" min="0" step="0.1" inputmode="decimal" placeholder="Count your cash, type it here" value="${s.counted??''}">
+    ${verdict}
+  </section>`;
+}
+
+function menuEditor(m){
+  return `<div class="mi-edit"><div class="mrow">
+      <label class="full"><span class="label">Name</span><input data-mf="name" data-id="${m.id}" value="${esc(m.name)}"></label>
+      <label><span class="label">Price RM (1 piece)</span><input type="number" min="0" step="0.5" inputmode="decimal" data-mf="price" data-id="${m.id}" value="${m.price}"></label>
+      <label style="justify-content:flex-end"><span class="label">On the Sell screen</span><span style="display:flex;align-items:center;gap:8px;min-height:42px"><input type="checkbox" data-mf="active" data-id="${m.id}" ${m.active?'checked':''} id="act-${m.id}"> Selling now</span></label>
+      <div class="full" style="display:flex;flex-direction:column;gap:6px"><span class="label">Deals</span>
+        ${m.deals.length?'':'<span class="note">No deals yet. Add one like 3 for RM10.</span>'}
+        ${m.deals.map((d,i)=>`<span class="row" style="gap:6px;flex-wrap:nowrap;align-items:center">
+          <input type="number" min="2" inputmode="numeric" data-mf="dealQty" data-di="${i}" data-id="${m.id}" value="${d.qty}" style="width:60px" aria-label="Deal ${i+1} quantity">
+          <span class="muted">for RM</span>
+          <input type="number" min="0" step="0.5" inputmode="decimal" data-mf="dealPrice" data-di="${i}" data-id="${m.id}" value="${d.price}" style="width:76px" aria-label="Deal ${i+1} price">
+          <button type="button" class="x" data-act="rmDeal" data-id="${m.id}" data-deal="${i}" aria-label="Remove deal ${dealText(d)}">×</button></span>`).join('')}
+        <button type="button" class="link" data-act="addDeal" data-id="${m.id}" style="align-self:flex-start">+ Add a deal</button>
+      </div>
+      <div class="ctl">
+        ${confirmDel===m.id?`<span class="confirm">Delete ${esc(m.name)} for good? <button class="btn danger small" data-act="delItem" data-id="${m.id}">Delete</button><button class="btn ghost small" data-act="cancelDel">Keep</button></span>`
+          :`<button class="link" data-act="askDelItem" data-id="${m.id}" style="color:var(--bad)">Delete food</button>`}
+        <button class="btn small" data-act="toggleItem" data-id="${m.id}">Done</button>
+      </div>
+    </div></div>`;
+}
+function renderMenu(){
+  const sorted=[...menu].sort((a,b)=>(b.active-a.active)||a.name.localeCompare(b.name));
+  const selling=menu.filter(m=>m.active).length, q=menuQuery.toLowerCase();
+  const chev='<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  const rows = sorted.map(m=>`<div class="mi ${openItem===m.id?'open':''} ${m.active?'':'off'}" data-name="${esc(m.name.toLowerCase())}" ${q&&!m.name.toLowerCase().includes(q)?'hidden':''}>
+      <button type="button" class="mi-head" data-act="toggleItem" data-id="${m.id}" aria-expanded="${openItem===m.id}">
+        ${badge(m)}
+        <span class="mi-main"><b>${esc(m.name)}</b>
+          <span class="mi-sub">${rm(m.price)} each${m.deals.map(d=>`<span class="dchip">${dealText(d)}</span>`).join('')}${m.active?'':'<span class="hidden-pill">Not selling</span>'}</span></span>
+        ${chev}
+      </button>
+      ${openItem===m.id?menuEditor(m):''}
+    </div>`).join('');
+  const addForm = addOpen ? `<div class="mi open"><div class="mi-edit"><div class="row">
+      <label style="flex:2 1 180px"><span class="label">Name</span><input id="nmName" placeholder="e.g. Cheesy wedges"></label>
+      <label><span class="label">Price RM (1 piece)</span><input id="nmPrice" type="number" min="0" step="0.5" inputmode="decimal" placeholder="5"></label>
+      <label><span class="label">Deal qty (optional)</span><input id="nmDQ" type="number" min="0" inputmode="numeric" placeholder="3"></label>
+      <label><span class="label">Deal RM</span><input id="nmDP" type="number" min="0" step="0.5" inputmode="decimal" placeholder="10"></label>
+    </div>
+    <div class="ctl" style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button class="btn ghost small" data-act="closeAdd">Cancel</button><button class="btn small" data-act="addItem">Add food</button></div>
+    </div></div>` : '';
+  return `<section class="panel">
+    <div class="top"><div><h2>Your menu</h2><p class="note">${plural(menu.length,'food')} · ${selling} selling now</p></div>
+      ${addOpen?'':'<button class="btn small" data-act="openAdd">+ Add food</button>'}</div>
+    ${addForm}
+    ${menu.length>5?`<div class="mtools"><input type="search" id="menuSearch" placeholder="Search your foods" value="${esc(menuQuery)}" aria-label="Search your foods"></div>`:''}
+    <div class="mlist">${rows||'<p class="empty">No foods yet. Tap "+ Add food" to add your first one.</p>'}</div>
+    <p class="empty" id="noMatch" ${q&&!menu.some(m=>m.name.toLowerCase().includes(q))?'':'hidden'}>No food matches "${esc(menuQuery)}".</p>
+    <p class="note">Tap a food to change its price or deals. Foods you're not selling move to the bottom and stay out of the Sell screen.</p>
+  </section>`;
+}
+
+function renderSessions(){
+  const d=defaultSessionValues(); d.date=nextSunday();
+  const list = sortedSessions();
+  const rows = list.length ? list.map(s=>{ const st=sessionStats(s);
+    return `<button type="button" class="list-btn ${s.id===curId?'on':''}" data-act="openSession" data-id="${s.id}">
+      <span class="d">${nice(s.date)} · ${esc(s.start)}–${esc(s.end)}</span><span class="k">${rm(st.sales)}</span>
+      <span class="s">${st.sold} sold · ${st.free} free${st.brought?` · ${st.left} left of ${st.brought}`:''} · spent ${rm(st.spent)}${s.place?' · '+esc(s.place):''}</span>
+      ${chips(s.date)}</button>`; }).join('') : '<p class="empty">No sessions yet. Start one above, then sell from the Sell tab.</p>';
+  const c=cur();
+  return `<section class="panel"><h2>New session</h2>${sessionForm('ns',d)}
+    <button class="btn" data-act="startSession">Start session</button></section>
+  <section class="panel"><h2>All sessions</h2><div>${rows}</div>
+    ${c?(confirmDel==='session'?`<div class="confirm">Delete ${nice(c.date)} and its whole list? <button class="btn danger small" data-act="delSession">Delete</button><button class="btn ghost small" data-act="cancelDel">Keep</button></div>`
+      :`<button class="btn ghost small" data-act="askDelSession" style="align-self:flex-start">Delete selected session</button>`):''}
+  </section>`;
+}
+
+/* ---------- charts ---------- */
+function niceMax(v){ if(v<=5) return 5; const p=Math.pow(10,Math.floor(Math.log10(v))); const n=v/p; return (n<=2?2:n<=5?5:10)*p; }
+function barChart(data, opt={}){
+  const n=data.length, H=180, top=22, bottom=opt.marks?40:30, left=30, bw=Math.min(40, 560/Math.max(n,1)*0.6), step=Math.max(bw+10, 560/Math.max(n,1));
+  const W=left+step*n+8, ph=H-top-bottom;
+  const max=niceMax(Math.max(1,...data.map(d=>d.value)));
+  let g='';
+  for (let i=0;i<=2;i++){ const v=max*i/2, y=top+ph-ph*i/2;
+    g+=`<line class="gl" x1="${left}" x2="${W}" y1="${y}" y2="${y}"/><text x="${left-6}" y="${y+4}" text-anchor="end">${opt.money?Math.round(v):Math.round(v)}</text>`; }
+  data.forEach((d,i)=>{
+    const x=left+step*i+(step-bw)/2, h=ph*d.value/max, y=top+ph-h, r=Math.min(4,h);
+    const path = h>0 ? `M${x},${top+ph}V${y+r}Q${x},${y} ${x+r},${y}H${x+bw-r}Q${x+bw},${y} ${x+bw},${y+r}V${top+ph}Z` : '';
+    g+=`<g><rect class="hit" x="${left+step*i}" y="${top}" width="${step}" height="${ph+bottom}" data-tip="${esc(d.tip)}" tabindex="0"/>`;
+    if (path) g+=`<path class="bar ${d.dim?'dim':''}" d="${path}"/>`;
+    if (opt.showVals && d.value>0) g+=`<text class="val" x="${x+bw/2}" y="${y-6}" text-anchor="middle">${opt.money?Math.round(d.value):d.value}</text>`;
+    g+=`<text x="${x+bw/2}" y="${top+ph+16}" text-anchor="middle">${esc(d.label)}</text>`;
+    if (opt.marks && d.mark) g+=`<circle class="mk" cx="${x+bw/2}" cy="${top+ph+28}" r="4"><title>${esc(d.mark)}</title></circle>`;
+    g+='</g>';
+  });
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" style="min-width:${Math.min(W, n*40+40)}px" role="img" aria-label="${esc(opt.label||'Chart')}">${g}</svg></div>`;
+}
+
+function renderInsights(){
+  const ym=insMonth;
+  const list = Object.values(sessions).filter(s=>s.date.startsWith(ym)).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start));
+  const nav = `<div class="mnav"><button type="button" data-act="mPrev" aria-label="Previous month">‹</button><b>${monthName(ym)}</b><button type="button" data-act="mNext" aria-label="Next month">›</button></div>`;
+  if (!list.length) return `<section class="panel"><div class="top"><h2>Insights</h2>${nav}</div>
+    <p class="empty">No sessions in ${monthName(ym)}. Once you sell, this month's numbers, best foods, busy hours and holiday effects show here.</p></section>${holidayCompare()}`;
+  let sales=0, sold=0, free=0, me=0, spent=0, deals=0, discount=0, brought=0, left=0;
+  const per={}; const hours={};
+  const stats = list.map(s=>{ const st=sessionStats(s);
+    sales+=st.sales; sold+=st.sold; free+=st.free; me+=st.me; spent+=st.spent; deals+=st.deals; discount+=st.discount; brought+=st.brought; left+=Math.max(0,st.left);
+    for (const id in st.items){ const x=st.items[id], p=per[id]||(per[id]={sold:0,free:0,sales:0,deals:0,brought:0,left:0});
+      p.sold+=x.sold; p.free+=x.free; p.sales+=x.sales; p.deals+=x.deals; p.brought+=x.brought; p.left+=Math.max(0,x.left); }
+    for (const e of s.entries) if (e.type==='sale'||e.type==='deal'){ const h=+e.t.slice(11,13); hours[h]=(hours[h]||0)+e.qty; }
+    return {s,st};
+  });
+  const sessChart = barChart(stats.map(({s,st})=>{ const t=tags(s.date);
+    return {label:U(s.date).getUTCDate()+'', value:st.sold, tip:`${nice(s.date)}: ${st.sold} sold, ${rm(st.sales)}${t.length?' · '+t.map(x=>x.label).join(', '):''}`, mark:isBusy(s.date)?t.map(x=>x.label).join(', '):''}; }),
+    {showVals:true, marks:true, label:'Items sold per session'});
+  const hk=Object.keys(hours).map(Number);
+  let hourChart='<p class="empty">No timed sales yet.</p>';
+  if (hk.length){ const lo=Math.min(...hk), hi=Math.max(...hk); const arr=[];
+    for(let h=lo;h<=hi;h++) arr.push({label:(h%12||12)+(h<12?'am':'pm'), value:hours[h]||0, tip:`${(h%12||12)}:00–${(h%12||12)}:59${h<12?'am':'pm'}: ${hours[h]||0} sold this month`});
+    const peak=Math.max(...arr.map(a=>a.value)); arr.forEach(a=>a.dim=a.value<peak*0.5);
+    hourChart=barChart(arr,{showVals:true,label:'Items sold by hour'})+`<p class="note">Grey bars are your slow hours, under half your busiest hour. That's when a deal can help clear leftovers.</p>`;
+  }
+  const rows = Object.entries(per).sort((a,b)=>b[1].sales-a[1].sales).map(([id,p])=>{
+    const m=itemById(id); const thru=p.brought?Math.round(p.sold/p.brought*100)+'%':'–';
+    return `<tr><td>${esc(m?.name||'Removed item')}</td><td>${p.sold}</td><td>${rm0(p.sales)}</td><td>${thru}</td><td>${p.free}</td><td>${p.deals}</td></tr>`; }).join('');
+  const best = stats.reduce((a,b)=>b.st.sales>a.st.sales?b:a);
+  return `<section class="panel"><div class="top"><h2>Insights</h2>${nav}</div>
+    <div class="tiles">
+      <div class="hero"><span class="label">Sales</span><b>${rm(sales)}</b></div>
+      <div><span class="label">Sessions</span><b>${list.length}</b></div>
+      <div><span class="label">Items sold</span><b>${sold}</b></div>
+      <div><span class="label">Given free</span><b>${free}</b></div>
+      <div><span class="label">Left over</span><b>${brought?left:'–'}</b></div>
+      <div><span class="label">Food for me</span><b>${rm0(me)}</b></div>
+      <div><span class="label">All spending</span><b>${rm0(spent)}</b></div>
+      <div><span class="label">Deal discount</span><b>${rm0(discount)}</b></div>
+    </div>
+    <p class="note">Best session: ${nice(best.s.date)} with ${rm(best.st.sales)}. Average per session: ${rm(sales/list.length)}.${deals?` You gave ${plural(deals,'deal')}, which earned ${rm0(discount)} less than full price but turned leftovers into cash.`:''}</p>
+  </section>
+  <section class="panel"><h2>Items sold per session</h2>${sessChart}
+    <p class="note"><svg width="10" height="10" aria-hidden="true"><circle class="mk" cx="5" cy="5" r="4"/></svg> Gold dot means a holiday, long weekend, school holiday or payday week. Tap a bar for details.</p></section>
+  <section class="panel"><h2>Busy hours</h2>${hourChart}</section>
+  <section class="panel"><h2>By food</h2>
+    <div class="tbl"><table><thead><tr><th>Food</th><th>Sold</th><th>Sales</th><th>Sold of brought</th><th>Free</th><th>Deals</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="note">"Sold of brought" near 100% means you sell out, so bring more. Low means you bring too many.</p></section>
+  ${holidayCompare()}`;
+}
+
+function groupAvg(filter){
+  const ss=Object.values(sessions).filter(s=>filter(s.date));
+  if(!ss.length) return null;
+  let sold=0, sales=0, outs=0; const per={};
+  ss.forEach(s=>{ const st=sessionStats(s); sold+=st.sold; sales+=st.sales; if(st.brought&&st.left<=Math.max(1,st.brought*0.05)) outs++;
+    for(const id in st.items){ const x=st.items[id]; if(!x.brought&&!x.sold) continue; const p=per[id]||(per[id]={sold:0,free:0,n:0,outs:0}); p.sold+=x.sold; p.free+=x.free; p.n++; if(x.brought&&x.left<=1) p.outs++; } });
+  return {n:ss.length, sold:sold/ss.length, sales:sales/ss.length, outs, per};
+}
+function holidayCompare(){
+  const busy=groupAvg(d=>isBusy(d)&&!isRamadan(d)), normal=groupAvg(d=>!isBusy(d)&&!isRamadan(d)), ram=groupAvg(isRamadan);
+  if(!busy && !normal) return '';
+  const line=(name,g)=> g?`<tr><td>${name}</td><td>${g.n}</td><td>${g.sold.toFixed(1)}</td><td>${rm0(g.sales)}</td></tr>`:`<tr><td>${name}</td><td>0</td><td>–</td><td>–</td></tr>`;
+  let msg='Keep selling. You need at least 3 normal and 3 busy days before this comparison means much.';
+  if (busy && normal && busy.n>=3 && normal.n>=3){
+    const pct=Math.round((busy.sold/normal.sold-1)*100);
+    msg = pct>=10 ? `On busy days you sell about ${pct}% more. Bring more on the days marked in Plan.`
+      : pct<=-10 ? `On busy days you sell about ${-pct}% less, maybe because customers travel away. Bring fewer then.`
+      : 'Busy days and normal days sell about the same for you so far.';
+  }
+  return `<section class="panel"><h2>Holidays vs normal days</h2><p class="note">All months together.</p>
+    <div class="tbl"><table><thead><tr><th>Kind of day</th><th>Sessions</th><th>Avg sold</th><th>Avg sales</th></tr></thead><tbody>
+    ${line('Normal days',normal)}${line('Holiday, school break or payday',busy)}${ram?line('Ramadan',ram):''}</tbody></table></div>
+    <div class="callout"><b>What this means</b><span>${msg}</span></div></section>`;
+}
+
+function nextSunday(){ let d=today(); while(dow(d)!==0) d=addDays(d,1); return d; }
+function renderPlan(){
+  const start=nextSunday(); const days=[]; for(let i=0;i<12;i++) days.push(addDays(start,i*7));
+  const active=menu.filter(m=>m.active);
+  const g={busy:groupAvg(d=>isBusy(d)&&!isRamadan(d)), normal:groupAvg(d=>!isBusy(d)&&!isRamadan(d)), ram:groupAvg(isRamadan)};
+  const any=Object.values(sessions).length;
+  const rows=days.map(d=>{
+    const busy=isBusy(d), ram=isRamadan(d);
+    const grp = ram ? (g.ram||g.normal) : busy ? (g.busy||g.normal) : g.normal||g.busy;
+    let sug='', why='';
+    if (grp){
+      const kind = grp===g.ram&&ram?'Ramadan':grp===g.busy&&busy?'busy':'normal';
+      const lines = active.map(m=>{ const p=grp.per[m.id]; if(!p||!p.n) return null;
+        const used=(p.sold+p.free)/p.n; let n=used; const why=[`used ${Math.round(used)} on avg (${Math.round(p.sold/p.n)} sold + ${Math.round(p.free/p.n)} free)`];
+        if (p.outs/p.n>=0.5){ n*=1.2; why.push('sold out, +20%'); }
+        if (busy && kind==='normal'){ n*=1.15; why.push('busy day, +15%'); }
+        if (ram && kind!=='Ramadan'){ n*=0.85; why.push('Ramadan, −15%'); }
+        return `${Math.ceil(n)} ${esc(m.name)}<small>${why.join(' · ')}</small>`; }).filter(Boolean);
+      sug = lines.length ? lines.join('') : '';
+      why = `<small class="basis">from your ${plural(grp.n,(kind==='normal'?'normal':kind)+' session')}</small>`;
+    }
+    const t=tags(d);
+    const advice = ram ? 'Ramadan: mornings are often slower. Consider bringing less.' :
+      t.some(x=>x.k==='holiday'||x.k==='long') ? 'Holiday weekend: more people out, bring more.' :
+      t.some(x=>x.k==='school') ? 'School holiday: families out in the day, bring more.' :
+      t.some(x=>x.k==='payday') ? 'Payday week: people spend more.' : 'Normal Sunday.';
+    return `<div class="plan ${busy&&!ram?'busy':''}">
+      <div class="day">${U(d).getUTCDate()}<small>${U(d).toLocaleDateString('en-MY',{month:'short',timeZone:'UTC'})}</small></div>
+      <div class="body">${chips(d)}<span class="note">${advice}</span></div>
+      <div class="sug">${sug||(any?'–':'')}${sug?why:''}</div>
+    </div>`;
+  }).join('');
+  return `<section class="panel"><h2>Next 12 Sundays</h2>
+    <p class="note">Gold dates are holidays, long weekends, school holidays or payday weeks. ${any?'The numbers are how many to bring. Each one starts from how many you used on similar past Sundays (sold plus given free), then adds 20% if you sold out, because you could have sold more. With only 1 or 2 past sessions, treat it as a rough guide.':'After a few sessions, this shows how many of each food to bring.'}</p>
+    ${rows}
+    <p class="note">Pahang public holidays and Kumpulan B school holidays for 2026–2027. Ramadan dates are approximate. 2027 Raya, Hari Raya Haji and Deepavali dates may shift.</p>
+  </section>`;
+}
+
+function renderSettings(){
+  const c=cfg();
+  return `<section class="panel"><h2>Google Sheet connection</h2>
+    <p class="note">Paste the web app link from Apps Script (Deploy, then Manage deployments) and the app key from the "Read me" tab of your sheet.</p>
+    <label class="label" for="cfgUrl">Web app link</label>
+    <input id="cfgUrl" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(c.url||'')}" autocomplete="off">
+    <label class="label" for="cfgKey">App key</label>
+    <input id="cfgKey" placeholder="8 letters and numbers" value="${esc(c.key||'')}" autocomplete="off">
+    <div class="confirm"><button class="btn" data-act="connect">Connect and load my data</button>${c.url?'<button class="btn ghost small" data-act="disconnect">Disconnect</button>':''}</div>
+    <p class="note" id="cfgMsg">${mode==='sheet'?'Connected. Every tap saves to your sheet.':'Not connected yet.'}</p>
+  </section>
+  <section class="panel"><h2>About</h2>
+    <p class="note">Laris Manis keeps a copy on this phone, so it works with no signal at the market and uploads when you're back online. Your sheet in Google Drive is the main record.</p>
+  </section>`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e=>{
+  const tb=e.target.closest('[data-tab]'); if(tb){ tab=tb.dataset.tab; confirmDel=null; editTime=null; render(); window.scrollTo({top:0}); return; }
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const id=b.dataset.id, act=b.dataset.act, s=cur();
+  switch(act){
+    case 'startSession': {
+      const date=$('nsDate').value||today(); newSession({date, start:$('nsStart').value||'09:00', end:$('nsEnd').value||'12:00', place:$('nsPlace').value.trim()});
+      tab='sell'; break; }
+    case 'openSession': curId=id; tab='sell'; window.scrollTo({top:0}); break;
+    case 'q-': qty[id]=Math.max(1,(qty[id]||1)-1); break;
+    case 'q+': qty[id]=Math.min(50,(qty[id]||1)+1); break;
+    case 'sell': { const m=itemById(id), q=qty[id]||1; const eid=addEntry({type:'sale',itemId:id,name:m.name,qty:q,amount:q*m.price}); showToast(`Sold ${q} ${m.name} · +${rm(q*m.price)}`,eid); qty[id]=1; break; }
+    case 'deal': { const m=itemById(id), d=m.deals[+b.dataset.deal]; if(!d) break; const eid=addEntry({type:'deal',itemId:id,name:m.name,qty:d.qty,amount:d.price}); showToast(`Deal: ${d.qty} ${m.name} for ${rm(d.price)}`,eid); break; }
+    case 'addDeal': { const m=itemById(id); m.deals.push({qty:2, price:Math.round(m.price*2)}); markDirty('menu'); break; }
+    case 'rmDeal': { const m=itemById(id); m.deals.splice(+b.dataset.deal,1); markDirty('menu'); break; }
+    case 'free': { const m=itemById(id), q=qty[id]||1; const eid=addEntry({type:'free',itemId:id,name:m.name,qty:q,amount:0}); showToast(`Gave ${q} ${m.name} free`,eid); qty[id]=1; break; }
+    case 'addSpend': { const what=$('sWhat').value.trim(), amount=parseFloat($('sAmt').value); if(!what||!(amount>=0)){ $('sWhat').focus(); return; }
+      const eid=addEntry({type:'spend',what,amount,cat:$('sType').value,qty:0}); showToast(`Spent ${rm(amount)} on ${what}`,eid); break; }
+    case 'undo': case 'rmEntry': if(s){ s.entries=s.entries.filter(x=>x.id!==id); markDirty(s.id); if(act==='undo'){ toastMsg='Removed'; toastUndo=null; } } break;
+    case 'editTime': editTime=id; break;
+    case 'addItem': { const name=$('nmName').value.trim(), price=parseFloat($('nmPrice').value); if(!name||!(price>=0)){ $('nmName').focus(); return; }
+      const dq=parseInt($('nmDQ').value)||0, dp=parseFloat($('nmDP').value)||0;
+      const m={id:'i'+uid(),name,price,deals:dq>1&&dp>0?[{qty:dq,price:dp}]:[],active:true};
+      menu.push(m); addOpen=false; markDirty('menu'); if(s && s.brought && !(m.id in s.brought)){ s.brought[m.id]=0; markDirty(s.id); } break; }
+    case 'askDelItem': confirmDel=id; break;
+    case 'toggleItem': openItem = openItem===id ? null : id; confirmDel=null; break;
+    case 'openAdd': addOpen=true; openItem=null; render(); $('nmName')?.focus(); return;
+    case 'closeAdd': addOpen=false; break;
+    case 'delItem': menu=menu.filter(m=>m.id!==id); confirmDel=null; markDirty('menu'); break;
+    case 'cancelDel': confirmDel=null; break;
+    case 'askDelSession': confirmDel='session'; break;
+    case 'delSession': if(s){ const k=s.id; delete sessions[k]; curId=sortedSessions()[0]?.id||null; markDirty(k); } confirmDel=null; break;
+    case 'connect': {
+      const url=$('cfgUrl').value.trim(), key=$('cfgKey').value.trim(), msg=$('cfgMsg');
+      if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)){ msg.textContent='That link should start with https://script.google.com/macros/s/ and end with /exec.'; return; }
+      if (!key){ msg.textContent='Type the app key from the "Read me" tab.'; return; }
+      msg.textContent='Connecting…';
+      try{ localStorage.setItem('laris-cfg', JSON.stringify({url,key})); }catch(err){}
+      loadFromSheet(true).then(ok=>{ if(ok){ tab='sell'; render(); } else { const m=$('cfgMsg'); if(m) m.textContent='Could not connect. Check the link and the key, and that the web app is set to "Anyone".'; } });
+      return; }
+    case 'disconnect': try{ localStorage.removeItem('laris-cfg'); }catch(err){} mode='local'; setStatus('Saved on this phone'); break;
+    case 'mPrev': { const d=U(insMonth+'-01'); d.setUTCMonth(d.getUTCMonth()-1); insMonth=d.toISOString().slice(0,7); break; }
+    case 'mNext': { const d=U(insMonth+'-01'); d.setUTCMonth(d.getUTCMonth()+1); insMonth=d.toISOString().slice(0,7); break; }
+  }
+  render();
+  if (act==='addSpend'){ /* keep the spend box closed after adding */ }
+});
+document.addEventListener('change', e=>{
+  const t=e.target, s=cur();
+  if (t.dataset.brought && s){ s.brought=s.brought||{}; s.brought[t.dataset.brought]=Math.max(0,parseInt(t.value)||0); markDirty(s.id); render(); }
+  else if (t.id==='counted' && s){ s.counted = t.value===''?null:Math.max(0,parseFloat(t.value)||0); markDirty(s.id); render(); }
+  else if (t.dataset.timeinput && s){ const en=s.entries.find(x=>x.id===t.dataset.timeinput); if(en&&t.value){ en.t=en.t.slice(0,11)+t.value; markDirty(s.id);} editTime=null; render(); }
+  else if (t.dataset.mf){ const m=itemById(t.dataset.id); if(!m) return; const f=t.dataset.mf;
+    if (f==='name') m.name=t.value.trim()||m.name;
+    else if (f==='price') m.price=Math.max(0,parseFloat(t.value)||0);
+    else if (f==='dealQty'){ const d=m.deals[+t.dataset.di]; if(d) d.qty=Math.max(2,parseInt(t.value)||2); }
+    else if (f==='dealPrice'){ const d=m.deals[+t.dataset.di]; if(d) d.price=Math.max(0,parseFloat(t.value)||0); }
+    else if (f==='active') m.active=t.checked;
+    markDirty('menu'); render(); }
+});
+document.addEventListener('input', e=>{
+  if (e.target.id!=='menuSearch') return;
+  menuQuery=e.target.value; const q=menuQuery.toLowerCase(); let any=false;
+  document.querySelectorAll('.mi[data-name]').forEach(el=>{ const ok=!q||el.dataset.name.includes(q); el.hidden=!ok; any=any||ok; });
+  const nm=$('noMatch'); if(nm){ nm.hidden=any||!q; nm.textContent=`No food matches "${menuQuery}".`; }
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Enter' && e.target.matches('#sWhat,#sAmt')){ e.preventDefault(); document.querySelector('[data-act="addSpend"]')?.click(); }});
+document.addEventListener('focusout', e=>{ if(e.target.dataset?.timeinput){ setTimeout(()=>{ if(editTime===e.target.dataset.timeinput){ editTime=null; render(); } },150); }});
+// chart tooltips
+const tip=$('tip');
+function showTip(el,x,y){ tip.textContent=el.dataset.tip; tip.hidden=false; const w=tip.offsetWidth; tip.style.left=Math.max(8,Math.min(innerWidth-w-8,x-w/2))+'px'; tip.style.top=Math.max(8,y-44)+'px'; }
+document.addEventListener('pointerover',e=>{ const h=e.target.closest('[data-tip]'); if(h) showTip(h,e.clientX,e.clientY); });
+document.addEventListener('pointermove',e=>{ const h=e.target.closest('[data-tip]'); if(h) showTip(h,e.clientX,e.clientY); else tip.hidden=true; });
+document.addEventListener('focusin',e=>{ const h=e.target.closest('[data-tip]'); if(h){ const r=h.getBoundingClientRect(); showTip(h,r.left+r.width/2,r.top+30);} });
+document.addEventListener('scroll',()=>{ tip.hidden=true; },{passive:true});
+
+/* ---------- start ---------- */
+function normSession(id,v){ return {id, date:v.date||id.slice(0,10), start:v.start||'09:00', end:v.end||'12:00', place:v.place||'', brought:{...(v.brought||{})}, counted:v.counted??null, entries:Array.isArray(v.entries)?v.entries.map(e=>({...e})):[]}; }
+function pickCurrent(){
+  if (curId && sessions[curId]) return;
+  const list=sortedSessions(); const t=today();
+  curId = (list.find(s=>s.date===t) || null)?.id || null;
+}
+try{ const raw=JSON.parse(localStorage.getItem('stall-v3')||'null'); if(raw){ menu=Array.isArray(raw.menu)?raw.menu.map(normItem):[]; for(const k in (raw.sessions||{})) sessions[k]=normSession(k,raw.sessions[k]); } }catch(e){}
+pickCurrent(); render(); setStatus('Saved on this phone');
+
+function cfg(){ try{ return JSON.parse(localStorage.getItem('laris-cfg')||'{}')||{}; }catch(e){ return {}; } }
+async function api(action, payload={}){
+  const c=cfg(); if(!c.url||!c.key) throw new Error('Not connected');
+  let r;
+  if (action==='getAll') r = await fetch(c.url+'?action=getAll&key='+encodeURIComponent(c.key), {cache:'no-store'});
+  else r = await fetch(c.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({key:c.key, action, ...payload})});
+  const j = await r.json(); if (!j.ok) throw new Error(j.error||'Failed'); return j.data ?? j;
+}
+let loading=false;
+async function loadFromSheet(first){
+  if (loading) return false; loading=true;
+  try{
+    const data = await api('getAll');
+    mode='sheet';
+    if (!(pending.has('menu') || dirty.has('menu'))) menu = (data.menu||[]).map(normItem); else markDirty('menu');
+    const fresh={}; for (const k in (data.sessions||{})) fresh[k]=normSession(k,data.sessions[k]);
+    for (const k of new Set([...pending, ...dirty])) if (k!=='menu'){ if (sessions[k]) fresh[k]=sessions[k]; else delete fresh[k]; markDirty(k); }
+    sessions=fresh; if (curId && !sessions[curId]) curId=null; pickCurrent(); saveLocal();
+    if (!editTime && !document.activeElement?.matches('input,select')) render();
+    if (!dirty.size) setStatus('Saved to your Google Sheet');
+    return true;
+  }catch(e){
+    if (cfg().url) setStatus('No internet right now. Saved on this phone.');
+    return false;
+  }finally{ loading=false; }
+}
+if (cfg().url){ mode='sheet'; render(); loadFromSheet(true); }
+document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible' && cfg().url && !dirty.size && !pending.size) loadFromSheet(); });
+window.addEventListener('online', ()=>{ if (cfg().url){ if (pending.size){ pending.forEach(k=>dirty.add(k)); flush(); } else loadFromSheet(); } });
+if ('serviceWorker' in navigator) window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body></html>
